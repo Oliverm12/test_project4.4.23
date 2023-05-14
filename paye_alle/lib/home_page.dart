@@ -3,6 +3,8 @@ import 'package:paye_alle/qrscanner.dart';
 import 'cart.dart';
 
 import 'home.dart';
+import 'product_list_tab.dart';
+import 'shopping_cart_tab.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,7 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   PageController pageController=PageController();
-  List<Widget> _pages=[HomePage1(),QrCodeScanner(),Cart()];
+  List<Widget> _pages=[ProductListTab(),QrCodeScanner(),ShoppingCartTab()];
 
   int selectIndex=0;
   void onPageChanged(int index){

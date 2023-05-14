@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "433074731135",
+    "project_id": "palle-3fea2",
+    "storage_bucket": "palle-3fea2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433074731135:android:60b25382de5b7f108d674a",
+        "android_client_info": {
+          "package_name": "com.example.paye_alle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "433074731135-3bj3mmt1fdkg0cs6iuat40p14s2r23mv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYFE40PTNCrGDF-DFk54yc8gCu92I1ENE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "433074731135-3bj3mmt1fdkg0cs6iuat40p14s2r23mv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

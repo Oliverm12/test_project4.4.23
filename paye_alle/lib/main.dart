@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 import 'fingerprint_page.dart';
+import 'login.dart';
+import 'package:firebase_core/firebase_core.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(PayeAlle());
+import 'model/app_state_model.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  runApp(
+    ChangeNotifierProvider<AppStateModel>(
+      create: (_) => AppStateModel()..loadProducts(),
+      child: PayeAlle(),
+    ),
+  );
+  //runApp(PayeAlle());
 }
 
 class PayeAlle extends StatelessWidget {
@@ -13,6 +27,7 @@ class PayeAlle extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PayeAlle',
+      debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );
   }
@@ -32,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => FingerprintPage()),
+        MaterialPageRoute(builder: (context) => LoginPage()),
       );
     });
   }

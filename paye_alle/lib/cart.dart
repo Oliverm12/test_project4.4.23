@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paye_alle/login.dart';
 
 import 'fingerprint_page.dart';
 
@@ -25,8 +26,9 @@ class _SettingsState extends State<Cart> {
             icon: const Icon(Icons.logout),
             tooltip: 'Log out',
             onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => FingerprintPage()),
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
               );
             },
           ), //IconButton

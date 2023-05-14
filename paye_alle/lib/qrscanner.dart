@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paye_alle/login.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'fingerprint_page.dart';
 
@@ -27,8 +28,9 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
               icon: const Icon(Icons.logout),
               tooltip: 'Log out',
               onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => FingerprintPage()),
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
             ), //IconButton
@@ -42,6 +44,13 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
               child: QRView(
                 key: qrKey,
                 onQRViewCreated: _onQRViewCreated,
+                  overlay: QrScannerOverlayShape(
+                      borderColor: Colors.white,
+                      borderRadius: 10,
+                      borderLength: 30,
+                      borderWidth: 10,
+                      //cutOutSize: scanArea
+                    )
               ),
             ),
             Expanded(
