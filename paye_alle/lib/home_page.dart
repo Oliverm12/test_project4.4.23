@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   PageController pageController=PageController();
-  List<Widget> _pages=[ProductListTab(),QrCodeScanner(),ShoppingCartTab()];
+  List<Widget> _pages=[HomePage1(),QrCodeScanner(),ShoppingCartTab()];
 
   int selectIndex=0;
   void onPageChanged(int index){

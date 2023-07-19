@@ -61,10 +61,10 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image.asset('./icon/letter_p.png', width: 200),
             SizedBox(height: 20),
-            Text(
+            /*Text(
               'PayeAlle',
               style: TextStyle(fontSize: 24),
-            ),
+            ),*/
           ],
         ),
       ),
