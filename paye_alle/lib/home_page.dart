@@ -3,7 +3,7 @@ import 'package:paye_alle/qrscanner.dart';
 import 'cart.dart';
 
 import 'home.dart';
-import 'product_list_tab.dart';
+//import 'product_list_tab.dart';
 import 'shopping_cart_tab.dart';
 
 class HomePage extends StatefulWidget {

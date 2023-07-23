@@ -27,6 +27,8 @@ class _ShoppingCartTabState extends State<ShoppingCartTab> {
   DateTime dateTime = DateTime.now();*/
   final _currencyFormat = NumberFormat.currency(symbol: '\$');
 
+  get auth => null;
+
 
   SliverChildBuilderDelegate _buildSliverChildBuilderDelegate(
       AppStateModel model) {
@@ -99,7 +101,7 @@ class _ShoppingCartTabState extends State<ShoppingCartTab> {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(builder: (context) => LoginPage(auth: auth,)),
                     );
                   },
                 ),],

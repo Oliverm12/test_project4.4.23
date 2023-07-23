@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_mocks/src/firebase_auth_mocks_base.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
+import 'register.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  LoginPage({super.key, required MockFirebaseAuth auth});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -13,6 +15,12 @@ class _LoginPageState extends State<LoginPage> {
   // text editing controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  void _openUserReg (BuildContext ctx) {
+    showModalBottomSheet(context: ctx, isScrollControlled: false, builder: (_) {
+      return const UserReg();
+    },);
+  }
 
   // sign user in method
   void signUserIn() async {
@@ -60,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (context) {
         return const AlertDialog(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: Color(0xff388e3c),
           title: Center(
             child: Text(
               'Incorrect Email',
@@ -78,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (context) {
         return const AlertDialog(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: Color(0xff388e3c),
           title: Center(
             child: Text(
               'Incorrect Password',
@@ -93,55 +101,49 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      //backgroundColor: Colors.grey[300],
       body: SafeArea(
+        child: SingleChildScrollView(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height: 40),
+              Image.asset('./icon/letter_p.png', width: 150),
+              SizedBox(height: 20),
 
-              // logo
-              const Icon(
-                Icons.lock,
-                size: 40,
-              ),
-
-              const SizedBox(height: 20),
-
-              // welcome back, you've been missed!
-              Text(
-                'PayeAlle',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 16,
-                ),
-              ),
               const SizedBox(height: 25),
 
-              // email textfield
-              TextField(
+              // email text_field_
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child:TextField(
+                key: Key('email'),
                 controller: emailController,
                 decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Email',
-              ),),
+              ),),),
 
               const SizedBox(height: 25),
 
-              // password textfield
-              TextField(
+              // password text_field
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child:TextField(
                 obscureText: true,
+                key: Key('password'),
                 controller: passwordController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Password',
-                ),),
+                ),),),
 
               const SizedBox(height: 10),
 
               // forgot password?
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -156,26 +158,41 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 25),
 
               // sign in button
-            ElevatedButton(
-              child: const Text('Login'),
-              onPressed: () {
-              signUserIn();
-            },
-            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // login button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      // Set the background color of the button
+                      backgroundColor: Color(0xff388e3c),
+                    ),
+                    child: const Text('Login'),
+                    onPressed: () {
+                      signUserIn();
+                    },
+                  ),
 
-              const SizedBox(height: 20),
+                  // add some spacing between the buttons
+                  SizedBox(width: 20),
 
-              ElevatedButton(
-                child: const Text('Sign Up'),
-                onPressed: () {
-
-                },
+                  // register button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      // Set the background color of the button
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.black,
+                    ),
+                    child: const Text('Register'),
+                    onPressed: () => _openUserReg( (context),
+                  ),
+                  ),
+                ],
               ),
-
             ],
           ),
         ),
-      ),
+      ),),
     );
   }
 }

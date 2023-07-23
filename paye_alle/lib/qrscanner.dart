@@ -1,3 +1,4 @@
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:paye_alle/login.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -28,9 +29,10 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
               icon: const Icon(Icons.logout),
               tooltip: 'Log out',
               onPressed: () {
+                final auth = MockFirebaseAuth();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => LoginPage(auth: auth,)),
                 );
               },
             ), //IconButton

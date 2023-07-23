@@ -31,9 +31,10 @@ class ProductListTab extends StatelessWidget {
               icon: const Icon(Icons.logout),
               tooltip: 'Log out',
               onPressed: () {
+                var auth;
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => LoginPage(auth: auth,)),
                 );
               },
             ),],
