@@ -15,7 +15,8 @@ class _SettingsState extends State<Cart> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+      home: Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff388e3c),
         title: Text('PayeAlle'),
@@ -36,6 +37,7 @@ class _SettingsState extends State<Cart> {
           ), //IconButton
         ],
         toolbarHeight: 65,
+      ),
       ),
     );
   }

@@ -15,7 +15,8 @@ class _SettingsState extends State<HomePage1> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+      home:Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff388e3c),
         title: Text('PayeAlle'),
@@ -37,6 +38,7 @@ class _SettingsState extends State<HomePage1> {
         ],
         toolbarHeight: 65,
       ),
+    ),
     );
   }
 }
