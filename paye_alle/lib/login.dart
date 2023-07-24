@@ -3,6 +3,7 @@ import 'package:firebase_auth_mocks/src/firebase_auth_mocks_base.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'register.dart';
+import 'package:password_text_field/password_text_field.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({super.key, required MockFirebaseAuth auth});
@@ -16,14 +17,30 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void _openUserReg (BuildContext ctx) {
+  bool isEmailValid(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  /*void _openUserReg (BuildContext ctx) {
     showModalBottomSheet(context: ctx, isScrollControlled: false, builder: (_) {
       return const UserReg();
     },);
-  }
+  }*/
 
   // sign user in method
   void signUserIn() async {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      showBlankFieldsMessage();
+      return;
+    }
+
+    if (!isEmailValid(emailController.text)) {
+      // Show a popup to inform the user that the email format is invalid
+      wrongEmailMessage1();
+      return;
+    }
+
     // show loading circle
     showDialog(
       context: context,
@@ -62,6 +79,23 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void showBlankFieldsMessage() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Color(0xff388e3c),
+          title: Center(
+            child: Text(
+              'Please enter both email and password.',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   // wrong email message popup
   void wrongEmailMessage() {
     showDialog(
@@ -72,6 +106,22 @@ class _LoginPageState extends State<LoginPage> {
           title: Center(
             child: Text(
               'Incorrect Email',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  void wrongEmailMessage1() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const AlertDialog(
+          backgroundColor: Color(0xff388e3c),
+          title: Center(
+            child: Text(
+              'Incorrect Email Format',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -130,8 +180,8 @@ class _LoginPageState extends State<LoginPage> {
               // password text_field
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40.0),
-            child:TextField(
-                obscureText: true,
+            child:PasswordTextField(
+                //obscureText: true,
                 key: Key('password'),
                 controller: passwordController,
                 decoration: InputDecoration(
@@ -184,8 +234,12 @@ class _LoginPageState extends State<LoginPage> {
                       foregroundColor: Colors.black,
                     ),
                     child: const Text('Register'),
-                    onPressed: () => _openUserReg( (context),
-                  ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                      );
+                    },
                   ),
                 ],
               ),
