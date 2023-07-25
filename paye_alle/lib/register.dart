@@ -1,6 +1,7 @@
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:password_text_field/password_text_field.dart';
 import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -45,7 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     if (!isEmailValid(email)) {
-      _showErrorPopup('Invalid email format.');
+      _showErrorPopup('Incorrect email.');
       return;
     }
 
@@ -120,7 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff388e3c),
-        title: Text('Register Page'),
+        title: Text('Register'),
         titleTextStyle: TextStyle(
           fontSize: 22, fontWeight: FontWeight.w500,
         ),
@@ -152,10 +153,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                  child: TextField(
+                  child: PasswordTextField(
                     key: Key('password'),
                     controller: passwordController,
-                    obscureText: true,
+                    //obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Password',
@@ -163,14 +164,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 5),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                  child: TextField(
+                  child: PasswordTextField(
                     key: Key('confirmPassword'),
                     controller: confirmPasswordController,
-                    obscureText: true,
+                    //obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Confirm Password',

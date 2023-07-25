@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (!isEmailValid(emailController.text)) {
       // Show a popup to inform the user that the email format is invalid
-      wrongEmailMessage1();
+      wrongEmailMessage();
       return;
     }
 
@@ -113,22 +113,6 @@ class _LoginPageState extends State<LoginPage> {
       },
     );
   }
-  void wrongEmailMessage1() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const AlertDialog(
-          backgroundColor: Color(0xff388e3c),
-          title: Center(
-            child: Text(
-              'Incorrect Email Format',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   // wrong password message popup
   void wrongPasswordMessage() {
@@ -189,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                   labelText: 'Password',
                 ),),),
 
-              const SizedBox(height: 10),
+              //const SizedBox(height: 5),
 
               // forgot password?
               Padding(
@@ -197,15 +181,17 @@ class _LoginPageState extends State<LoginPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      'Forgot Password?',
-                      style: TextStyle(color: Colors.grey[600]),
+                    TextButton(
+                      onPressed: () {
+                        //_openLoginPage(context);
+                      },
+                      child: const Text('Forgot Password?'),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 5),
 
               // sign in button
               Row(
