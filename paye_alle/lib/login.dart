@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/src/firebase_auth_mocks_base.dart';
 import 'package:flutter/material.dart';
+import 'forgot.dart';
 import 'home_page.dart';
 import 'register.dart';
 import 'package:password_text_field/password_text_field.dart';
@@ -138,8 +139,8 @@ class _LoginPageState extends State<LoginPage> {
       //backgroundColor: Colors.grey[300],
       body: SafeArea(
         child: SingleChildScrollView(
-        child: Center(
-          child: Column(
+          child: Center(
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 40),
@@ -149,8 +150,8 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 25),
 
               // email text_field_
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child:TextField(
                 key: Key('email'),
                 controller: emailController,
@@ -162,9 +163,9 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 25),
 
               // password text_field
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
-            child:PasswordTextField(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child:PasswordTextField(
                 //obscureText: true,
                 key: Key('password'),
                 controller: passwordController,
@@ -183,7 +184,10 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        //_openLoginPage(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                        );
                       },
                       child: const Text('Forgot Password?'),
                     ),
@@ -232,7 +236,8 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
-      ),),
+      ),
+      ),
     );
   }
 }

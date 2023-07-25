@@ -2,7 +2,7 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:paye_alle/login.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'fingerprint_page.dart';
+//import 'fingerprint_page.dart';
 
 class QrCodeScanner extends StatefulWidget {
   @override
@@ -67,25 +67,39 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
     );
   }
 
+  bool isScanCompleted = false;
+
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
+      if (!isScanCompleted) {
       setState(() {
         scanResult = scanData.code!;
-
+        isScanCompleted = true;
       });
-      //showModal(scanResult);
+      _showScanResultDialog(); // Show the scan result in a pop-up dialog
+    }
     });
   }
-    void showModal(String scanResult) {
-      showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            child: Text(scanResult),
-          );
-        },
-      );
+
+  void _showScanResultDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Scan Result'),
+          content: Text(scanResult),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

@@ -75,7 +75,6 @@ class _RegisterPageState extends State<RegisterPage> {
         email: email,
         password: password,
       );
-
       // Registration successful, navigate back to login page
       _openLoginPage(context);
     } on FirebaseAuthException catch (e) {
@@ -108,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: Text(''),
             ),
           ],
         );
@@ -119,13 +118,13 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+     /* appBar: AppBar(
         backgroundColor: Color(0xff388e3c),
         title: Text('Register'),
         titleTextStyle: TextStyle(
           fontSize: 22, fontWeight: FontWeight.w500,
         ),
-      ),
+      ),*/
       body: SafeArea(
         child: SingleChildScrollView(
           child: Center(

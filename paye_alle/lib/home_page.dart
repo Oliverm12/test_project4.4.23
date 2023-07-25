@@ -24,33 +24,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      /*appBar: AppBar(
-        backgroundColor: Color(0xff388e3c),
-        title: Text('PayeAlle'),
-        titleTextStyle: TextStyle(
-          fontSize: 25, fontWeight: FontWeight.w500,
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Log out',
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => FingerprintPage()),
-              );
-            },
-          ), //IconButton
-        ],
-        toolbarHeight: 65,
-      ),*/
-      //body: Center(
-        //child: Text('Welcome to the home page!'),
-        /* child:
-          Container(child: Navbar()),*/
-      //),
-
-
+    return WillPopScope(
+        onWillPop: () async {
+      if (selectIndex != 0) {
+        setState(() {
+          selectIndex = 0;
+        });
+        return false;
+      }
+      return false;
+    },
+    child: Scaffold(
       body: _pages[selectIndex],
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: selectIndex,
@@ -80,6 +64,7 @@ class _HomePageState extends State<HomePage> {
       ),
       ],
       )
+    )
     );
   }
 }
