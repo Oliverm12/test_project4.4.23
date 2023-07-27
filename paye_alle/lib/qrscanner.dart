@@ -85,6 +85,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
   void _showScanResultDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
           title: Text('Scan Result'),
@@ -93,6 +94,9 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
+                setState(() {
+                  isScanCompleted = false; // Allow scanning again
+                });
               },
               child: Text('Close'),
             ),
