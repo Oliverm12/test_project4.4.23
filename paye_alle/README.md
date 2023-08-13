@@ -1,6 +1,6 @@
 # paye_alle
 
-A new Flutter project.
+PFE.
 
 ## Getting Started
 
