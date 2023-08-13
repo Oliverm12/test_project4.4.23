@@ -39,7 +39,7 @@ dependencies:
   qr_code_scanner: ^1.0.1
   qr_flutter: ^4.0.0
   firebase_auth: ^4.6.0
-  firebase_core: ^2.12.0
+  firebase_core: ^2.15.0
   password_text_field: ^1.2.0
   intl: ^0.18.1
   provider: ^6.0.5
@@ -48,7 +48,8 @@ dependencies:
   mockito: ^5.4.2
   test_api: ^0.5.1
   carousel_slider: ^4.2.1
-  cloud_firestore: ^4.8.3
+  cloud_firestore: ^4.8.4
+  firebase_core_platform_interface: ^4.8.0
 
 dev_dependencies:
   flutter_test:

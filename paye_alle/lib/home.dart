@@ -97,7 +97,7 @@ class _SettingsState extends State<HomePage1> {
               children: [
                 // Button 1 - Redirect to a new page
                 Container(
-                  width: 100,
+                  width: 125,
                   height: 100,
                   child: ElevatedButton(
                     onPressed: () {
@@ -107,12 +107,12 @@ class _SettingsState extends State<HomePage1> {
                         MaterialPageRoute(builder: (context) => NewPage()),
                       );*/
                     },
-                    child: Text('New Page'),
+                    child: Text('Transactions'),
                   ),
                 ),
                 // Button 2 - Redirect to the scanning page
                 Container(
-                  width: 100,
+                  width: 125,
                   height: 100,
                   child: ElevatedButton(
                     onPressed: () {

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:paye_alle/cart.dart';
 import 'package:paye_alle/home.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:paye_alle/home_page.dart';
-import 'package:paye_alle/qrscanner.dart'; // Import the firebase_core package
+import 'package:paye_alle/qrscanner.dart';
+import 'package:firebase_core/firebase_core.dart'; // Import the firebase_core package
 
 void main() {
   // Initialize Firebase before running the tests
@@ -13,20 +13,26 @@ void main() {
   });
 
   testWidgets('Initial page is HomePage1', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MaterialApp(
-      home: HomePage(),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => HomePage(),
+        ),
+      ),
+    );
 
     // Verify that the initial page displayed is HomePage1
     expect(find.byType(HomePage1), findsOneWidget);
   });
 
   testWidgets('Navigate to QrCodeScanner page', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MaterialApp(
-      home: HomePage(),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => HomePage(),
+        ),
+      ),
+    );
 
     // Tap the Scan icon to navigate to QrCodeScanner page
     final scanIcon = find.byIcon(Icons.qr_code_scanner_sharp);
@@ -38,10 +44,13 @@ void main() {
   });
 
   testWidgets('Navigate to Cart page', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MaterialApp(
-      home: HomePage(),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => HomePage(),
+        ),
+      ),
+    );
 
     // Tap the Cart icon to navigate to Cart page
     final cartIcon = find.byIcon(Icons.shopping_cart_outlined);
@@ -53,10 +62,13 @@ void main() {
   });
 
   testWidgets('Navigate back to HomePage1 from Cart page', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MaterialApp(
-      home: HomePage(),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => HomePage(),
+        ),
+      ),
+    );
 
     // Tap the Cart icon to navigate to Cart page
     final cartIcon = find.byIcon(Icons.shopping_cart_outlined);

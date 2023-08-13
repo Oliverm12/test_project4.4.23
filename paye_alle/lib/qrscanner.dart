@@ -2,7 +2,8 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:paye_alle/login.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-//import 'fingerprint_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class QrCodeScanner extends StatefulWidget {
   @override
@@ -82,29 +83,73 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
     });
   }
 
-  void _showScanResultDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Scan Result'),
-          content: Text(scanResult),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                setState(() {
-                  isScanCompleted = false; // Allow scanning again
-                });
-              },
-              child: Text('Close'),
+  void _showScanResultDialog() async {
+    CollectionReference products = FirebaseFirestore.instance.collection('items');
+
+    DocumentSnapshot snapshot = await products.doc(scanResult).get();
+
+    if (snapshot.exists) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Product Details'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Show product image
+                Image.network(data['image'], height: 150, width: 150),
+
+                // Show product name
+                Text('Name: ${data['name']}'),
+
+                // Show product price
+                Text('Price: \$${data['price']}'),
+              ],
             ),
-          ],
-        );
-      },
-    );
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                  setState(() {
+                    isScanCompleted = false; // Allow scanning again
+                  });
+                },
+                child: Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Handle the case when the scanned ID doesn't match any product
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Product Not Found'),
+            content: Text('No product found.'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                  setState(() {
+                    isScanCompleted = false; // Allow scanning again
+                  });
+                },
+                child: Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
+
 
   @override
   void dispose() {
