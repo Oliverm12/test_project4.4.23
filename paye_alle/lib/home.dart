@@ -119,7 +119,7 @@ class _SettingsState extends State<HomePage1> {
                       // Navigate to the scanning page
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => QrCodeScanner()),
+                        MaterialPageRoute(builder: (context) => QrCodeScanner())
                       );
                     },
                     child: Text('Scan'),

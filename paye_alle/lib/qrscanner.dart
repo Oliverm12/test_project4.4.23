@@ -45,21 +45,21 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
             Expanded(
               flex: 4,
               child: QRView(
-                key: qrKey,
-                onQRViewCreated: _onQRViewCreated,
+                  key: qrKey,
+                  onQRViewCreated: _onQRViewCreated,
                   overlay: QrScannerOverlayShape(
-                      borderColor: Colors.white,
-                      borderRadius: 10,
-                      borderLength: 30,
-                      borderWidth: 10,
-                      //cutOutSize: scanArea
-                    )
+                    borderColor: Colors.white,
+                    borderRadius: 10,
+                    borderLength: 30,
+                    borderWidth: 10,
+                    //cutOutSize: scanArea
+                  )
               ),
             ),
             Expanded(
               flex: 1,
               child: Center(
-                child: Text('Scan result: $scanResult'),
+                //child: Text('Scan result: $scanResult'),
               ),
             ),
           ],
@@ -74,12 +74,12 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       if (!isScanCompleted) {
-      setState(() {
-        scanResult = scanData.code!;
-        isScanCompleted = true;
-      });
-      _showScanResultDialog(); // Show the scan result in a pop-up dialog
-    }
+        setState(() {
+          scanResult = scanData.code!;
+          isScanCompleted = true;
+        });
+        _showScanResultDialog(); // Show the scan result in a pop-up dialog
+      }
     });
   }
 
