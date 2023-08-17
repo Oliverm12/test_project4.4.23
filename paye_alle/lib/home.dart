@@ -100,6 +100,10 @@ class _SettingsState extends State<HomePage1> {
                   width: 125,
                   height: 100,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      // Set the background color of the button
+                      backgroundColor: Color(0xff009688),
+                    ),
                     onPressed: () {
                       // Navigate to a new page
                       /*Navigator.push(
@@ -115,6 +119,10 @@ class _SettingsState extends State<HomePage1> {
                   width: 125,
                   height: 100,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      // Set the background color of the button
+                      backgroundColor: Color(0xff009688),
+                    ),
                     onPressed: () {
                       // Navigate to the scanning page
                       Navigator.push(

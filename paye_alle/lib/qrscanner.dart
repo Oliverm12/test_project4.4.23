@@ -112,14 +112,45 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
               ],
             ),
             actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                  setState(() {
-                    isScanCompleted = false; // Allow scanning again
-                  });
-                },
-                child: Text('Close'),
+              Row( // Wrap buttons in a Row
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      // Set the background color of the button
+                      backgroundColor: Color(0xff388e3c),
+                    ),
+                    onPressed: () {
+                      //_addToCart(data); // Call the method to add to cart
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      );
+                      Navigator.of(context).pop(); // Close the dialog
+                      setState(() {
+                        isScanCompleted = false; // Allow scanning again
+                      });
+                    },
+                    child: Text('Add to Cart'),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      // Set the background color of the button
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                      setState(() {
+                        isScanCompleted = false; // Allow scanning again
+                      });
+                    },
+                    child: Text('Close'),
+                  ),
+                ],
               ),
             ],
           );
@@ -135,6 +166,10 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
             content: Text('No product found.'),
             actions: [
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  // Set the background color of the button
+                  backgroundColor: Colors.red,
+                ),
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                   setState(() {

@@ -158,7 +158,9 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Email',
-              ),),),
+                ),
+              ),
+            ),
 
               const SizedBox(height: 25),
 
@@ -172,7 +174,9 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Password',
-                ),),),
+                ),
+              ),
+            ),
 
               //const SizedBox(height: 5),
 
