@@ -27,6 +27,8 @@ class _SettingsState extends State<HomePage1> {
     fetchImageUrls();
   }
 
+
+
   // Function to fetch image URLs from Firestore
   void fetchImageUrls() {
     _firestore.collection('images').get().then((QuerySnapshot querySnapshot) {
@@ -54,12 +56,18 @@ class _SettingsState extends State<HomePage1> {
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Log out',
-            onPressed: () {
+            onPressed: () async {
               final auth = MockFirebaseAuth();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage(auth: auth,)),
-              );
+              try {
+                await auth.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage(auth: auth)),
+                );
+              } catch (e) {
+                print("Error during sign out: $e");
+                // Handle sign out error if needed
+              }
             },
           ), //IconButton
         ],

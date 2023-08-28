@@ -38,7 +38,7 @@ dependencies:
   local_auth: ^2.1.6
   qr_code_scanner: ^1.0.1
   qr_flutter: ^4.0.0
-  firebase_auth: ^4.6.0
+  firebase_auth: ^4.7.3
   firebase_core: ^2.15.0
   password_text_field: ^1.2.0
   intl: ^0.18.1

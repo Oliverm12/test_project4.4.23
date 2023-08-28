@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:paye_alle/login.dart';
@@ -29,12 +30,18 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
             IconButton(
               icon: const Icon(Icons.logout),
               tooltip: 'Log out',
-              onPressed: () {
+              onPressed: () async {
                 final auth = MockFirebaseAuth();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage(auth: auth,)),
-                );
+                try {
+                  await auth.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage(auth: auth)),
+                  );
+                } catch (e) {
+                  print("Error during sign out: $e");
+                  // Handle sign out error if needed
+                }
               },
             ), //IconButton
           ],
@@ -83,6 +90,32 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
     });
   }
 
+  void _addToCart(Map<String, dynamic> productData) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      CollectionReference cartCollection = FirebaseFirestore.instance.collection('users').doc(userId).collection('cart');
+
+      productData['scanResult'] = scanResult;
+
+      await cartCollection.add(productData);
+      String cartItemId = scanResult;
+
+      await FirebaseFirestore.instance.collection('items').doc(cartItemId).update({'status': 0});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Product added to cart')),
+      );
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error adding to cart')),
+      );
+    }
+  }
+
+
   void _showScanResultDialog() async {
     CollectionReference products = FirebaseFirestore.instance.collection('items');
 
@@ -90,6 +123,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
 
     if (snapshot.exists) {
       Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      int productStatus = data['status'];
 
       showDialog(
         context: context,
@@ -112,52 +146,63 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
               ],
             ),
             actions: [
-              Row( // Wrap buttons in a Row
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      // Set the background color of the button
-                      backgroundColor: Color(0xff388e3c),
-                    ),
-                    onPressed: () {
-                      //_addToCart(data); // Call the method to add to cart
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      );
-                      Navigator.of(context).pop(); // Close the dialog
-                      setState(() {
-                        isScanCompleted = false; // Allow scanning again
-                      });
-                    },
-                    child: Text('Add to Cart'),
+              if (productStatus == 0) // Product already in cart
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      // Set the background color of the button
-                      backgroundColor: Colors.red,
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                    setState(() {
+                      isScanCompleted = false; // Allow scanning again
+                    });
+                  },
+                  child: Text('Product Already Scanned'),
+                )
+              else
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xff388e3c),
+                      ),
+                      onPressed: () {
+                        _addToCart(data);
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                        );
+                        Navigator.of(context).pop(); // Close the dialog
+                        setState(() {
+                          isScanCompleted = false; // Allow scanning again
+                        });
+                      },
+                      child: Text('Add to Cart'),
                     ),
-                    onPressed: () {
-                      Navigator.of(context).pop(); // Close the dialog
-                      setState(() {
-                        isScanCompleted = false; // Allow scanning again
-                      });
-                    },
-                    child: Text('Close'),
-                  ),
-                ],
-              ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                        setState(() {
+                          isScanCompleted = false; // Allow scanning again
+                        });
+                      },
+                      child: Text('Close'),
+                    ),
+                  ],
+                ),
             ],
           );
         },
       );
     } else {
-      // Handle the case when the scanned ID doesn't match any product
       showDialog(
         context: context,
         builder: (context) {
@@ -167,7 +212,6 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
             actions: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  // Set the background color of the button
                   backgroundColor: Colors.red,
                 ),
                 onPressed: () {
@@ -184,6 +228,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
       );
     }
   }
+
 
 
   @override
