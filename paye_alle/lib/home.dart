@@ -4,6 +4,7 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:paye_alle/login.dart';
 import 'package:paye_alle/qrscanner.dart';
+import 'package:paye_alle/webscreen.dart';
 
 //import 'fingerprint_page.dart';
 
@@ -27,9 +28,6 @@ class _SettingsState extends State<HomePage1> {
     fetchImageUrls();
   }
 
-
-
-  // Function to fetch image URLs from Firestore
   void fetchImageUrls() {
     _firestore.collection('images').get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((DocumentSnapshot docSnapshot) {
@@ -99,7 +97,7 @@ class _SettingsState extends State<HomePage1> {
                 }).toList(),
               ),
             ),
-            SizedBox(height: 150), // Add some space between the carousel and the buttons
+            SizedBox(height: 150),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -113,11 +111,13 @@ class _SettingsState extends State<HomePage1> {
                       backgroundColor: Color(0xff009688),
                     ),
                     onPressed: () {
-                      // Navigate to a new page
-                      /*Navigator.push(
+                      Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => NewPage()),
-                      );*/
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              WebPageScreen(url: 'https://www.paypal.com/activities/'),
+                        ),
+                      );
                     },
                     child: Text('Transactions'),
                   ),

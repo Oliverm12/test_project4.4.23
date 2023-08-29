@@ -50,6 +50,8 @@ dependencies:
   carousel_slider: ^4.2.1
   cloud_firestore: ^4.8.4
   firebase_core_platform_interface: ^4.8.0
+  webview_flutter: ^4.2.3
+  flutter_inappwebview: ^5.7.2+3
 
 dev_dependencies:
   flutter_test:
