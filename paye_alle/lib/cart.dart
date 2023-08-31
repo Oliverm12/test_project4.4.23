@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:paye_alle/login.dart';
-
-//import 'fingerprint_page.dart';
+//import 'package:paye_alle/paypalscreen.dart';
 
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
@@ -31,6 +31,18 @@ class _CartState extends State<Cart> {
     } else {
       return []; // Return an empty list if the user is not logged in
     }
+  }
+
+  double _calculateTotalPrice(List<QueryDocumentSnapshot> items) {
+    double totalPrice = 0;
+
+    for (var cartItem in items) {
+      if (cartItem['status'] == 1) {
+        totalPrice += cartItem['price'];
+      }
+    }
+
+    return totalPrice;
   }
 
   @override
@@ -72,76 +84,161 @@ class _CartState extends State<Cart> {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error loading cart items'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty || snapshot.data!.every((cartItem) => cartItem['status'] == 0)) {
+            } else if (!snapshot.hasData ||
+                snapshot.data!.isEmpty ||
+                snapshot.data!.every((cartItem) => cartItem['status'] == 0)) {
               return Center(child: Text('Your cart is empty'));
             } else {
               final cartItems = snapshot.data!;
               final Items =
               cartItems.where((cartItem) => cartItem['status'] == 1).toList();
 
-                //final cartItems = snapshot.data!;
-                return ListView.builder(
-                  itemCount: Items.length,
-                  itemBuilder: (context, index) {
-                    final cartItem = Items[index];
-                    final productName = cartItem['name'];
-                    final productPrice = cartItem['price'];
-                    final imageUrl = cartItem["image"];
-                    final cartItemId = cartItem.id;
+              double totalPrice = _calculateTotalPrice(Items);
 
-                    String scanResult = cartItem['scanResult'];
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: Items.length,
+                      itemBuilder: (context, index) {
+                        final cartItem = Items[index];
+                        final productName = cartItem['name'];
+                        final productPrice = cartItem['price'];
+                        final imageUrl = cartItem["image"];
+                        final cartItemId = cartItem.id;
 
-                    return ListTile(
-                      leading: Image.network(
-                        imageUrl,
-                        fit: BoxFit.contain,
+                        String scanResult = cartItem['scanResult'];
+
+                        return ListTile(
+                          leading: Image.network(
+                            imageUrl,
+                            fit: BoxFit.contain,
+                          ),
+                          title: Text(productName),
+                          subtitle:
+                          Text('Price: \$${productPrice.toStringAsFixed(2)}'),
+                          trailing: IconButton(
+                            icon: Icon(Icons.remove_circle_outline),
+                            onPressed: () async {
+                              try {
+                                String userId =
+                                    FirebaseAuth.instance.currentUser!.uid;
+
+                                await _firestore
+                                    .collection('users')
+                                    .doc(userId)
+                                    .collection('cart')
+                                    .doc(cartItemId)
+                                    .update({'status': 0});
+
+                                await _firestore
+                                    .collection('items')
+                                    .doc(scanResult)
+                                    .update({'status': 1});
+
+                                setState(() {});
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Product removed from cart')),
+                                );
+                              } catch (e) {
+                                print('Error removing product from cart: $e');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Error removing product from cart: $e')),
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    //textStyle: TextStyle(fontSize: 20),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xff0000a7),
+                        textStyle: TextStyle(fontSize: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                      title: Text(productName),
-                      subtitle: Text('Price: \$${productPrice.toStringAsFixed(2)}'),
-                      trailing: IconButton(
-                        icon: Icon(Icons.remove_circle_outline),
-                        onPressed: () async {
-                          try {
-                            String userId = FirebaseAuth.instance.currentUser!.uid;
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => UsePaypal(
+                                sandboxMode: true,
+                                clientId:
+                                "Ab-ti52HlWgStItZPojaBjIbGJzOPm-gzwQixGDMNJz8n9YyiWiPdCi4DBnZeP4UUKPocbuQTR4uOI1C",
+                                secretKey:
+                                "EKYOg5nydC4BmijYh9IB15aicfQmPPGWDjnumiDR1yTR6ycpTmj0qoFrYcHcH8fcBkslqH7eSxjjspda",
+                                returnURL: "https://samplesite.com/return",
+                                cancelURL: "https://samplesite.com/cancel",
+                                transactions: [
+                                  {
+                                    "amount": {
+                                      "total": totalPrice,
+                                      "currency": "USD",
+                                      "details": {
+                                        "subtotal": totalPrice,
+                                        "shipping": '0',
+                                        "shipping_discount": 0
+                                      }
+                                    },
+                                  }
+                                ],
+                                note: "Contact us for any questions on your order.",
+                                onSuccess: (Map params) async {
+                                  print("onSuccess: $params");
 
-                            await _firestore
-                                .collection('users')
-                                .doc(userId)
-                                .collection('cart')
-                                .doc(cartItemId)
-                                .update({'status': 0});
+                                  try {
+                                    String userId = FirebaseAuth.instance.currentUser!.uid;
 
-                            await _firestore
-                                .collection('items')
-                                .doc(scanResult)
-                                .update({'status': 1});
+                                    // Retrieve the cart items
+                                    List<QueryDocumentSnapshot> cartItems = await _firestore
+                                        .collection('users')
+                                        .doc(userId)
+                                        .collection('cart')
+                                        .get()
+                                        .then((querySnapshot) => querySnapshot.docs);
 
-                            /* QuerySnapshot itemSnapshot = await _firestore
-                                .collection('items')
-                                .where('id', isEqualTo: scanResult)
-                                .get();
+                                    for (var cartItem in cartItems) {
+                                      await _firestore
+                                          .collection('users')
+                                          .doc(userId)
+                                          .collection('cart')
+                                          .doc(cartItem.id)
+                                          .update({'status': 0});
+                                    }
 
-                            if (itemSnapshot.docs.isNotEmpty) {
-                              await itemSnapshot.docs.first.reference.update({'status': 1});
-                            }*/
+                                    print("Cart items updated successfully");
+                                    setState(() {});
 
-                            // Refresh the cart list
-                            setState(() {});
+                                  } catch (e) {
+                                    print("Error updating cart items: $e");
+                                  }
+                                },
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Product removed from cart')),
-                            );
-                          } catch (e) {
-                            print('Error removing product from cart: $e');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error removing product from cart: $e')),
-                            );
-                          }
-                        },
-                      ),
-                    );
-                  },
-                );
+                                onError: (error) {
+                                  print("onError: $error");
+                                },
+                                onCancel: (params) {
+                                  print('cancelled: $params');
+                                }),
+
+                            //builder: (BuildContext context) => PayPalScreen(totalPrice: totalPrice), // Pass the total price here
+                          ),
+                        );
+                      },
+                      child: Text('PAY: \$${totalPrice.toStringAsFixed(2)}'),
+                    ),
+                  ),
+                ],
+              );
             }
           },
         ),
@@ -155,7 +252,8 @@ class Auth {
 
   Future<User?> signIn(String email, String password) async {
     try {
-      final UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+      final UserCredential userCredential =
+      await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -166,6 +264,5 @@ class Auth {
     }
   }
 
-  // Method to get the current authenticated user
   User? get currentUser => _firebaseAuth.currentUser;
 }
