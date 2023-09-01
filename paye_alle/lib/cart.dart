@@ -4,7 +4,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:paye_alle/login.dart';
-//import 'package:paye_alle/paypalscreen.dart';
+
+class Product {
+  final String name;
+  final double price;
+
+  Product({required this.name, required this.price});
+}
+
+class Invoice {
+  final List<Product> products;
+  final double total;
+  final DateTime date;
+  final String userEmail;
+
+  Invoice({
+    required this.products,
+    required this.total,
+    required this.date,
+    required this.userEmail,
+  });
+}
 
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
@@ -43,6 +63,25 @@ class _CartState extends State<Cart> {
     }
 
     return totalPrice;
+  }
+
+  Future<void> storeInvoice(Invoice invoice) async {
+    try {
+      final CollectionReference invoicesCollection = FirebaseFirestore.instance.collection('invoices');
+      await invoicesCollection.add({
+        'products': invoice.products.map((product) => {
+          'name': product.name,
+          'price': product.price,
+        }).toList(),
+        'total': invoice.total,
+        'date': invoice.date,
+        'userEmail': invoice.userEmail,
+      });
+
+      print('Invoice stored successfully');
+    } catch (e) {
+      print('Error storing invoice: $e');
+    }
   }
 
   @override
@@ -214,6 +253,24 @@ class _CartState extends State<Cart> {
                                           .doc(cartItem.id)
                                           .update({'status': 0});
                                     }
+                                    double totalPrice = _calculateTotalPrice(cartItems);
+
+                                    Invoice invoice = Invoice(
+                                      products: cartItems.map((cartItem) {
+                                        final productName = cartItem['name'];
+                                        final productPrice = cartItem['price'];
+                                        return Product(
+                                          name: productName,
+                                          price: productPrice,
+                                        );
+                                      }).toList(),
+                                      total: totalPrice,
+                                      date: DateTime.now(),
+                                      userEmail: FirebaseAuth
+                                          .instance.currentUser!.email!,
+                                    );
+
+                                    storeInvoice(invoice);
 
                                     print("Cart items updated successfully");
                                     setState(() {});

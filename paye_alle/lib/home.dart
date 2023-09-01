@@ -6,6 +6,8 @@ import 'package:paye_alle/login.dart';
 import 'package:paye_alle/qrscanner.dart';
 import 'package:paye_alle/webscreen.dart';
 
+import 'invoice.dart';
+
 //import 'fingerprint_page.dart';
 
 class HomePage1 extends StatefulWidget {
@@ -19,7 +21,8 @@ class _SettingsState extends State<HomePage1> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  List<String> imageUrls = []; // List to store image URLs
+  List<String> imageUrls = [];
+  List<String> captions = [];
 
   @override
   void initState() {
@@ -33,8 +36,10 @@ class _SettingsState extends State<HomePage1> {
       querySnapshot.docs.forEach((DocumentSnapshot docSnapshot) {
         var data = docSnapshot.data() as Map<String, dynamic>;
         var imageUrl = data['url'];
+        var caption = data['caption'];
         setState(() {
           imageUrls.add(imageUrl);
+          captions.add(caption);
         });
       });
     });
@@ -74,23 +79,46 @@ class _SettingsState extends State<HomePage1> {
         body: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 50.0),
+              padding: const EdgeInsets.only(top: 40.0),
               child: CarouselSlider(
                 options: CarouselOptions(
                   autoPlay: true,
                   aspectRatio: 16 / 9,
                   enlargeCenterPage: true,
                 ),
-                items: imageUrls.map((url) {
+                items: imageUrls.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  String url = entry.value;
+                  String caption = captions[index]; // Get the corresponding caption
+
                   return Builder(
                     builder: (BuildContext context) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.symmetric(horizontal: 5.0),
-                        child: Image.network(
-                          url,
-                          fit: BoxFit.cover,
-                        ),
+                      return //Column(
+                          ListView(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            //height: 200,
+                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Image.network(
+                              url,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(height: 10.0), // Add some spacing between the image and caption
+
+                            Text(
+                            caption,
+                              textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16.0, // You can adjust the font size
+                              fontWeight: FontWeight.bold, // You can adjust the font weight
+                            ),
+                          ),
+
+                          SizedBox(height: 25.0),
+                        ],
+                      //)
                       );
                     },
                   );
@@ -114,8 +142,8 @@ class _SettingsState extends State<HomePage1> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              WebPageScreen(url: 'https://www.paypal.com/activities/'),
+                          builder: (context) => InvoiceListScreen()
+                              //WebPageScreen(url: 'https://www.paypal.com/activities/'),
                         ),
                       );
                     },
