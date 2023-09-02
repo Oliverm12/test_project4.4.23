@@ -130,7 +130,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            title: Text('Product Details'),
+            title: Text('Product Already Scanned'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +157,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                       isScanCompleted = false; // Allow scanning again
                     });
                   },
-                  child: Text('Product Already Scanned'),
+                  child: Text('Close'),
                 )
               else
                 Row(

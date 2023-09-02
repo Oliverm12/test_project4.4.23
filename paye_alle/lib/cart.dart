@@ -220,10 +220,10 @@ class _CartState extends State<Cart> {
                                 transactions: [
                                   {
                                     "amount": {
-                                      "total": totalPrice,
+                                      "total": totalPrice.toStringAsFixed(2),
                                       "currency": "USD",
                                       "details": {
-                                        "subtotal": totalPrice,
+                                        "subtotal": totalPrice.toStringAsFixed(2),
                                         "shipping": '0',
                                         "shipping_discount": 0
                                       }
@@ -241,7 +241,7 @@ class _CartState extends State<Cart> {
                                     List<QueryDocumentSnapshot> cartItems = await _firestore
                                         .collection('users')
                                         .doc(userId)
-                                        .collection('cart')
+                                        .collection('cart').where('status', isEqualTo: 1)
                                         .get()
                                         .then((querySnapshot) => querySnapshot.docs);
 
@@ -291,7 +291,7 @@ class _CartState extends State<Cart> {
                           ),
                         );
                       },
-                      child: Text('PAY: \$${totalPrice.toStringAsFixed(2)}'),
+                      child: Text('PAY: \$ ${totalPrice.toStringAsFixed(2)}'),
                     ),
                   ),
                 ],
