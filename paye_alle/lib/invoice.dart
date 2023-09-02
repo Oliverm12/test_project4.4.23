@@ -1,8 +1,8 @@
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+//import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'login.dart';
+//import 'login.dart';
 
 class Invoice {
   final DateTime date;
@@ -202,12 +202,12 @@ class InvoiceListScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xff388e3c),
-          title: Text('PayeAlle'),
+          title: Text('Transactions'),
           titleTextStyle: TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.w500,
           ),
-          actions: <Widget>[
+          /*actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.logout),
               tooltip: 'Log out',
@@ -225,7 +225,7 @@ class InvoiceListScreen extends StatelessWidget {
                 }
               },
             ), //IconButton
-          ],
+          ],*/
           toolbarHeight: 65,
         ),
         body: InvoiceListWidget(),

@@ -53,6 +53,7 @@ dependencies:
   webview_flutter: ^4.2.3
   flutter_inappwebview: ^5.7.2+3
   flutter_paypal: ^0.0.7
+  shared_preferences: ^2.2.1
 
 dev_dependencies:
   flutter_test:

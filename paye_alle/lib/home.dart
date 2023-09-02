@@ -3,8 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:paye_alle/login.dart';
-import 'package:paye_alle/qrscanner.dart';
-import 'package:paye_alle/webscreen.dart';
+//import 'package:paye_alle/qrscanner.dart';
+//import 'package:paye_alle/webscreen.dart';
+import 'package:paye_alle/wishlist.dart';
 
 import 'invoice.dart';
 
@@ -129,47 +130,65 @@ class _SettingsState extends State<HomePage1> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Button 1 - Redirect to a new page
                 Container(
                   width: 125,
                   height: 100,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      // Set the background color of the button
                       backgroundColor: Color(0xff009688),
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => InvoiceListScreen()
-                              //WebPageScreen(url: 'https://www.paypal.com/activities/'),
+                            builder: (context) => InvoiceListScreen()
                         ),
                       );
                     },
-                    child: Text('Transactions'),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.receipt_long_outlined, // Add your desired icon
+                          size: 32,
+                          color: Colors.white,
+                        ),
+                        SizedBox(height: 8),
+                        Text('Transactions', style: TextStyle(fontSize: 14)),
+                      ],
+                    ),
                   ),
                 ),
-                // Button 2 - Redirect to the scanning page
                 Container(
                   width: 125,
                   height: 100,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      // Set the background color of the button
                       backgroundColor: Color(0xff009688),
                     ),
                     onPressed: () {
                       // Navigate to the scanning page
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => QrCodeScanner())
+                          context,
+                          MaterialPageRoute(builder: (context) => WishlistScreen())
                       );
                     },
-                    child: Text('Scan'),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.format_list_bulleted, // Add your desired icon
+                          size: 32,
+                          color: Colors.white,
+                        ),
+                        SizedBox(height: 8),
+                        Text('Wish list', style: TextStyle(fontSize: 14)),
+                      ],
+                    ),
                   ),
                 ),
               ],
+
             ),
           ],
         ),

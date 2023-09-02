@@ -158,6 +158,7 @@ class _CartState extends State<Cart> {
                           Text('Price: \$${productPrice.toStringAsFixed(2)}'),
                           trailing: IconButton(
                             icon: Icon(Icons.remove_circle_outline),
+                            color:Colors.red,
                             onPressed: () async {
                               try {
                                 String userId =
