@@ -116,191 +116,195 @@ class _CartState extends State<Cart> {
           ],
           toolbarHeight: 65,
         ),
-        body: FutureBuilder<List<QueryDocumentSnapshot>>(
-          future: getCartItems(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error loading cart items'));
-            } else if (!snapshot.hasData ||
-                snapshot.data!.isEmpty ||
-                snapshot.data!.every((cartItem) => cartItem['status'] == 0)) {
-              return Center(child: Text('Your cart is empty'));
-            } else {
-              final cartItems = snapshot.data!;
-              final Items =
-              cartItems.where((cartItem) => cartItem['status'] == 1).toList();
+        body:
+        Container(
+          color: Colors.grey[300],
+          child: FutureBuilder<List<QueryDocumentSnapshot>>(
+            future: getCartItems(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error loading cart items'));
+              } else if (!snapshot.hasData ||
+                  snapshot.data!.isEmpty ||
+                  snapshot.data!.every((cartItem) => cartItem['status'] == 0)) {
+                return Center(child: Text('Your cart is empty'));
+              } else {
+                final cartItems = snapshot.data!;
+                final Items =
+                cartItems.where((cartItem) => cartItem['status'] == 1).toList();
 
-              double totalPrice = _calculateTotalPrice(Items);
+                double totalPrice = _calculateTotalPrice(Items);
 
-              return Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: Items.length,
-                      itemBuilder: (context, index) {
-                        final cartItem = Items[index];
-                        final productName = cartItem['name'];
-                        final productPrice = cartItem['price'];
-                        final imageUrl = cartItem["image"];
-                        final cartItemId = cartItem.id;
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: Items.length,
+                        itemBuilder: (context, index) {
+                          final cartItem = Items[index];
+                          final productName = cartItem['name'];
+                          final productPrice = cartItem['price'];
+                          final imageUrl = cartItem["image"];
+                          final cartItemId = cartItem.id;
 
-                        String scanResult = cartItem['scanResult'];
+                          String scanResult = cartItem['scanResult'];
 
-                        return ListTile(
-                          leading: Image.network(
-                            imageUrl,
-                            fit: BoxFit.contain,
-                          ),
-                          title: Text(productName),
-                          subtitle:
-                          Text('Price: \$${productPrice.toStringAsFixed(2)}'),
-                          trailing: IconButton(
-                            icon: Icon(Icons.remove_circle_outline),
-                            color:Colors.red,
-                            onPressed: () async {
-                              try {
-                                String userId =
-                                    FirebaseAuth.instance.currentUser!.uid;
+                          return ListTile(
+                            leading: Image.network(
+                              imageUrl,
+                              fit: BoxFit.contain,
+                            ),
+                            title: Text(productName),
+                            subtitle:
+                            Text('Price: \$${productPrice.toStringAsFixed(2)}'),
+                            trailing: IconButton(
+                              icon: Icon(Icons.remove_circle_outline),
+                              color:Colors.red,
+                              onPressed: () async {
+                                try {
+                                  String userId =
+                                      FirebaseAuth.instance.currentUser!.uid;
 
-                                await _firestore
-                                    .collection('users')
-                                    .doc(userId)
-                                    .collection('cart')
-                                    .doc(cartItemId)
-                                    .update({'status': 0});
+                                  await _firestore
+                                      .collection('users')
+                                      .doc(userId)
+                                      .collection('cart')
+                                      .doc(cartItemId)
+                                      .update({'status': 0});
 
-                                await _firestore
-                                    .collection('items')
-                                    .doc(scanResult)
-                                    .update({'status': 1});
+                                  await _firestore
+                                      .collection('items')
+                                      .doc(scanResult)
+                                      .update({'status': 1});
 
-                                setState(() {});
+                                  setState(() {});
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text('Product removed from cart')),
-                                );
-                              } catch (e) {
-                                print('Error removing product from cart: $e');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'Error removing product from cart: $e')),
-                                );
-                              }
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                    //textStyle: TextStyle(fontSize: 20),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff0000a7),
-                        textStyle: TextStyle(fontSize: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text('Product removed from cart')),
+                                  );
+                                } catch (e) {
+                                  print('Error removing product from cart: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Error removing product from cart: $e')),
+                                  );
+                                }
+                              },
+                            ),
+                          );
+                        },
                       ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => UsePaypal(
-                                sandboxMode: true,
-                                clientId:
-                                "Ab-ti52HlWgStItZPojaBjIbGJzOPm-gzwQixGDMNJz8n9YyiWiPdCi4DBnZeP4UUKPocbuQTR4uOI1C",
-                                secretKey:
-                                "EKYOg5nydC4BmijYh9IB15aicfQmPPGWDjnumiDR1yTR6ycpTmj0qoFrYcHcH8fcBkslqH7eSxjjspda",
-                                returnURL: "https://samplesite.com/return",
-                                cancelURL: "https://samplesite.com/cancel",
-                                transactions: [
-                                  {
-                                    "amount": {
-                                      "total": totalPrice.toStringAsFixed(2),
-                                      "currency": "USD",
-                                      "details": {
-                                        "subtotal": totalPrice.toStringAsFixed(2),
-                                        "shipping": '0',
-                                        "shipping_discount": 0
-                                      }
-                                    },
-                                  }
-                                ],
-                                note: "Contact us for any questions on your order.",
-                                onSuccess: (Map params) async {
-                                  print("onSuccess: $params");
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                      //textStyle: TextStyle(fontSize: 20),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xff0000a7),
+                          textStyle: TextStyle(fontSize: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => UsePaypal(
+                                  sandboxMode: true,
+                                  clientId:
+                                  "Ab-ti52HlWgStItZPojaBjIbGJzOPm-gzwQixGDMNJz8n9YyiWiPdCi4DBnZeP4UUKPocbuQTR4uOI1C",
+                                  secretKey:
+                                  "EKYOg5nydC4BmijYh9IB15aicfQmPPGWDjnumiDR1yTR6ycpTmj0qoFrYcHcH8fcBkslqH7eSxjjspda",
+                                  returnURL: "https://samplesite.com/return",
+                                  cancelURL: "https://samplesite.com/cancel",
+                                  transactions: [
+                                    {
+                                      "amount": {
+                                        "total": totalPrice.toStringAsFixed(2),
+                                        "currency": "USD",
+                                        "details": {
+                                          "subtotal": totalPrice.toStringAsFixed(2),
+                                          "shipping": '0',
+                                          "shipping_discount": 0
+                                        }
+                                      },
+                                    }
+                                  ],
+                                  note: "Contact us for any questions on your order.",
+                                  onSuccess: (Map params) async {
+                                    print("onSuccess: $params");
 
-                                  try {
-                                    String userId = FirebaseAuth.instance.currentUser!.uid;
+                                    try {
+                                      String userId = FirebaseAuth.instance.currentUser!.uid;
 
-                                    // Retrieve the cart items
-                                    List<QueryDocumentSnapshot> cartItems = await _firestore
-                                        .collection('users')
-                                        .doc(userId)
-                                        .collection('cart').where('status', isEqualTo: 1)
-                                        .get()
-                                        .then((querySnapshot) => querySnapshot.docs);
-
-                                    for (var cartItem in cartItems) {
-                                      await _firestore
+                                      // Retrieve the cart items
+                                      List<QueryDocumentSnapshot> cartItems = await _firestore
                                           .collection('users')
                                           .doc(userId)
-                                          .collection('cart')
-                                          .doc(cartItem.id)
-                                          .update({'status': 0});
+                                          .collection('cart').where('status', isEqualTo: 1)
+                                          .get()
+                                          .then((querySnapshot) => querySnapshot.docs);
+
+                                      for (var cartItem in cartItems) {
+                                        await _firestore
+                                            .collection('users')
+                                            .doc(userId)
+                                            .collection('cart')
+                                            .doc(cartItem.id)
+                                            .update({'status': 0});
+                                      }
+                                      double totalPrice = _calculateTotalPrice(cartItems);
+
+                                      Invoice invoice = Invoice(
+                                        products: cartItems.map((cartItem) {
+                                          final productName = cartItem['name'];
+                                          final productPrice = cartItem['price'];
+                                          return Product(
+                                            name: productName,
+                                            price: productPrice,
+                                          );
+                                        }).toList(),
+                                        total: totalPrice,
+                                        date: DateTime.now(),
+                                        userEmail: FirebaseAuth
+                                            .instance.currentUser!.email!,
+                                      );
+
+                                      storeInvoice(invoice);
+
+                                      print("Cart items updated successfully");
+                                      setState(() {});
+
+                                    } catch (e) {
+                                      print("Error updating cart items: $e");
                                     }
-                                    double totalPrice = _calculateTotalPrice(cartItems);
+                                  },
 
-                                    Invoice invoice = Invoice(
-                                      products: cartItems.map((cartItem) {
-                                        final productName = cartItem['name'];
-                                        final productPrice = cartItem['price'];
-                                        return Product(
-                                          name: productName,
-                                          price: productPrice,
-                                        );
-                                      }).toList(),
-                                      total: totalPrice,
-                                      date: DateTime.now(),
-                                      userEmail: FirebaseAuth
-                                          .instance.currentUser!.email!,
-                                    );
+                                  onError: (error) {
+                                    print("onError: $error");
+                                  },
+                                  onCancel: (params) {
+                                    print('cancelled: $params');
+                                  }),
 
-                                    storeInvoice(invoice);
-
-                                    print("Cart items updated successfully");
-                                    setState(() {});
-
-                                  } catch (e) {
-                                    print("Error updating cart items: $e");
-                                  }
-                                },
-
-                                onError: (error) {
-                                  print("onError: $error");
-                                },
-                                onCancel: (params) {
-                                  print('cancelled: $params');
-                                }),
-
-                            //builder: (BuildContext context) => PayPalScreen(totalPrice: totalPrice), // Pass the total price here
-                          ),
-                        );
-                      },
-                      child: Text('PAY: \$ ${totalPrice.toStringAsFixed(2)}'),
+                              //builder: (BuildContext context) => PayPalScreen(totalPrice: totalPrice), // Pass the total price here
+                            ),
+                          );
+                        },
+                        child: Text('PAY: \$ ${totalPrice.toStringAsFixed(2)}'),
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }
-          },
+                  ],
+                );
+              }
+            },
+          ),
         ),
-      ),
+        ),
     );
   }
 }

@@ -47,7 +47,9 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
           ],
           toolbarHeight: 65,
         ),
-        body: Column(
+        body: Container(
+        color: Colors.grey[300],
+        child: Column(
           children: <Widget>[
             Expanded(
               flex: 4,
@@ -71,6 +73,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -20,7 +21,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
         toolbarHeight: 65,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('wish').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('wish')
+            .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
@@ -63,7 +67,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: Colors.grey.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(1),
                         width: 1,
                       ),
                     ),
@@ -172,10 +176,24 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   void _addWish(String itemName) {
-    FirebaseFirestore.instance.collection('wish').add({'name': itemName});
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance.collection('wish').add({
+      'name': itemName,
+      'userId': userId,
+    });
   }
 
   void _removeWish(String wishId) {
-    FirebaseFirestore.instance.collection('wish').doc(wishId).delete();
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance
+        .collection('wish')
+        .where('userId', isEqualTo: userId)
+        .where(FieldPath.documentId, isEqualTo: wishId)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        doc.reference.delete();
+      });
+    });
   }
 }

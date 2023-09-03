@@ -1,4 +1,5 @@
 //import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -59,6 +60,10 @@ Future<List<Invoice>> fetchInvoices() async {
 }
 
 class InvoiceListWidget extends StatelessWidget {
+  final String? currentUserEmail = FirebaseAuth.instance.currentUser?.email;
+
+  //InvoiceListWidget({required this.currentUserEmail});
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Invoice>>(
@@ -68,40 +73,47 @@ class InvoiceListWidget extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty ||
+            (currentUserEmail != null && snapshot.data!.every((invoice) => invoice.userEmail != currentUserEmail))) {
           return Center(child: Text('No invoices found.'));
         } else {
           List<Invoice> invoices = snapshot.data!;
           invoices.sort((a, b) => b.date.compareTo(a.date));
+
+          List<Invoice> currentUserInvoices = invoices
+              .where((invoice) => invoice.userEmail == currentUserEmail)
+              .toList();
+          print("USer:"+currentUserEmail!);
+
           //SizedBox(height: 50);
           return ListView.builder(
-            itemCount: invoices.length,
+            itemCount: currentUserInvoices.length,
             itemBuilder: (context, index) {
-              Invoice invoice = invoices[index];
+              Invoice invoice = currentUserInvoices[index];
               return ListTile(
                 title: Text(
                   'Date: ${invoice.date.toString()}',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold, // Make the title bold
-                    fontSize: 16, // Adjust the font size
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
                 subtitle: Text(
                   'Total: \$${invoice.total.toStringAsFixed(2)}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey, // Customize subtitle text color
+                    color: Colors.blueGrey,
                   ),
                 ),
                 onTap: () {
                   _showInvoiceDetailsDialog(context, invoice);
                 },
-                tileColor: Colors.white, // Set the background color of the ListTile
-                contentPadding: EdgeInsets.all(16), // Add padding around the content
+                tileColor: Colors.white,
+                contentPadding: EdgeInsets.all(10),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Add rounded corners
+                  borderRadius: BorderRadius.circular(8),
                   side: BorderSide(
-                    color: Colors.grey.withOpacity(0.5), // Add a border
+                    color: Colors.grey.withOpacity(1),
                     width: 1,
                   ),
                 ),
@@ -207,29 +219,12 @@ class InvoiceListScreen extends StatelessWidget {
             fontSize: 25,
             fontWeight: FontWeight.w500,
           ),
-          /*actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.logout),
-              tooltip: 'Log out',
-              onPressed: () async {
-                final auth = MockFirebaseAuth();
-                try {
-                  await auth.signOut();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage(auth: auth)),
-                  );
-                } catch (e) {
-                  print("Error during sign out: $e");
-                  // Handle sign-out error if needed
-                }
-              },
-            ), //IconButton
-          ],*/
           toolbarHeight: 65,
         ),
-        body: InvoiceListWidget(),
-      //),
+        body: Container(
+          //color: Colors.blueGrey,
+            child:InvoiceListWidget(),
+      ),
     );
   }
 }

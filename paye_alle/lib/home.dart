@@ -77,7 +77,9 @@ class _SettingsState extends State<HomePage1> {
         ],
         toolbarHeight: 65,
       ),
-        body: Column(
+        body: Container(
+          color: Colors.grey[300],
+          child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 40.0),
@@ -192,6 +194,7 @@ class _SettingsState extends State<HomePage1> {
             ),
           ],
         ),
+      ),
       )
     );
   }
